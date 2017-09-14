@@ -16,8 +16,11 @@
         <link rel="stylesheet" href="/css/base.css">
     </head>
     <body>
+        <header>
         <h1><?= $cbase ?> CBase</h1>
         <h2>Search Engine for Curated Collections of Projects</h2>
+        </header>
+        <main>
         <?php if ($cbase) { ?>
             <form>
                 <input type="text" name="q">
@@ -31,5 +34,9 @@
                 <button>Create CBase</button>
             </form>
         <?php } ?>
+        </main>
+        <footer>
+            <a href="https://github.com/codefornl/cbase">CBase on Github</a>
+        </footer>
     </body>
 </html>
