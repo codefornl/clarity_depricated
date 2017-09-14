@@ -16,7 +16,20 @@
         <link rel="stylesheet" href="/css/base.css">
     </head>
     <body>
-        <h1>CBase</h1>
+        <h1><?= $cbase ?> CBase</h1>
         <h2>Search Engine for Curated Collections of Projects</h2>
+        <?php if ($cbase) { ?>
+            <form>
+                <input type="text" name="q">
+                <button>Search CBase <?= $cbase ?></button>
+            </form>
+        <?php } else { ?>
+            <form method="post">
+                <h1>Create a new CBase</h1>
+                CBase name: <input type="text"><br>
+                Admin e-mail: <input type="email"><br>
+                <button>Create CBase</button>
+            </form>
+        <?php } ?>
     </body>
 </html>
