@@ -1,6 +1,6 @@
 <?php
-    ini_set("error_reporting", E_ALL);
-    ini_set("display_errors", 1);
+    //ini_set("error_reporting", E_ALL);
+    //ini_set("display_errors", 1);
 
     $uri = $_SERVER["REQUEST_URI"];
     $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
