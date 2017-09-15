@@ -1,19 +1,26 @@
 <?php
-    //ini_set("error_reporting", E_ALL);
-    //ini_set("display_errors", 1);
+    ini_set("error_reporting", E_ALL);
+    ini_set("display_errors", 1);
 
     $uri = $_SERVER["REQUEST_URI"];
     $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
     
     $cbase_name = $uri_parts[0];
     
-    $db_file = __DIR__ ."/../private/cbases_db.json";
+    $config = include(__DIR__ . "/../private/config.php");
     
-    $db = json_decode(file_get_contents($db_file), true);
+    $pdo = new PDO(
+        "mysql:host={$config["db"]["hostname"]};dbname={$config["db"]["dbname"]};charset=utf8mb4",
+        $config["db"]["username"],
+        $config["db"]["password"]
+    );
     
-    if ($cbase_name) { // cbase search page    
-        if (array_key_exists($cbase_name, $db["cbases"])) {
-            if (!empty($_GET["token"]) && password_verify($_GET["token"], $db["cbases"][$cbase_name]["token_encrypted"])) {
+    if ($cbase_name) { // cbase search page
+        $stmt = $pdo->prepare("SELECT * FROM cbases WHERE name = :name LIMIT 1");
+        $stmt->execute(["name" => $cbase_name]);
+        $cbase = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($cbase) {
+            if (!empty($_GET["token"]) && password_verify($_GET["token"], $cbase["token_encrypted"])) {
                 echo "ADMIN MODE!";
                 // add project page, edit project page
                 // search page, results page or details page
@@ -28,7 +35,10 @@
     } else { // main page
         if (!empty($_POST["cbase_name"]) && !empty($_POST["admin_email"])) {
             $cbase_name = $_POST["cbase_name"];
-            if (isset($db["cbases"][$cbase_name])) {
+            $stmt = $pdo->prepare("SELECT * FROM cbases WHERE name = :name LIMIT 1");
+            $stmt->execute(["name" => $cbase_name]);
+            $cbase = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($cbase) {
                 header("HTTP/1.1 409 Conflict");
                 exit("<h1>409 Conflict</h1><p>Existing CBase name. Please choose another name.</p>");
             } else {
@@ -39,14 +49,12 @@
                     $token .= $token_alphabet[array_rand($token_alphabet)];
                 }
                 $token_encrypted = password_hash($token, PASSWORD_DEFAULT);
-                
-                $db["cbases"][$cbase_name] = [
+                $stmt = $pdo->prepare("INSERT INTO cbases SET name = :name, admin_email = :admin_email, token_encrypted = :token_encrypted");
+                $stmt->execute([
                     "name" => $cbase_name,
                     "admin_email" => $admin_email,
                     "token_encrypted" => $token_encrypted
-                ];
-                
-                file_put_contents($db_file, json_encode($db));
+                ]);
                 
                 $email_title = "{$cbase_name} cbase admin permalink";
                 $email_body = "
@@ -67,14 +75,14 @@
     </head>
     <body>
         <header>
-        <h1><?= $cbase ?> CBase</h1>
+        <h1><?= $cbase["name"] ?> CBase</h1>
         <h2>Search Engine for Curated Collections of Projects</h2>
         </header>
         <main>
         <?php if ($cbase) { ?>
             <form>
                 <input type="text" name="q">
-                <button>Search CBase <?= $cbase ?></button>
+                <button>Search CBase <?= $cbase["name"] ?></button>
             </form>
         <?php } else { ?>
             <form method="post">
