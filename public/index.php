@@ -15,18 +15,17 @@
         $config["db"]["password"]
     );
     
+    define("MODE_USER", 1);
+    define("MODE_ADMIN", 2);
+    
     if ($cbase_name) { // cbase search page
         $stmt = $pdo->prepare("SELECT * FROM cbases WHERE name = :name LIMIT 1");
         $stmt->execute(["name" => $cbase_name]);
         $cbase = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($cbase) {
+            $mode = MODE_USER;
             if (!empty($_GET["token"]) && password_verify($_GET["token"], $cbase["token_encrypted"])) {
-                echo "ADMIN MODE!";
-                // add project page, edit project page
-                // search page, results page or details page
-            } else {
-                echo "USER MODE!";
-                // search page, results page or details page
+                $mode = MODE_ADMIN;
             }
         } else {
             header("HTTP/1.1 404 File Not Found");
@@ -75,13 +74,13 @@
     </head>
     <body>
         <header>
-        <h1><?= $cbase["name"] ?> CBase</h1>
-        <h2>Search Engine for Curated Collections of Projects</h2>
+                <h1><?= $cbase["name"] ?> CBase</h1>
+                <h2>Search Engine for Curated Collections of Projects</h2>
         </header>
         <main>
         <?php if ($cbase) { ?>
-            <form>
-                <input type="text" name="q">
+            <form class="searchbar">
+                <input type="text" name="q"><br>
                 <button>Search CBase <?= $cbase["name"] ?></button>
             </form>
         <?php } else { ?>
