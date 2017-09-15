@@ -7,6 +7,8 @@ Repository for http://cbase.eu.
 
 Installation:
 
-$> cp private/cbases_db.json.dist private/cbases_db.json
+1) create tables
 
-$> chmod 777 private/chbases_db.json
+2) cp config.php.dist config.php
+
+3) edit config.php
