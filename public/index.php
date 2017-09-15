@@ -5,7 +5,7 @@
     $uri = $_SERVER["REQUEST_URI"];
     $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
     
-    $cbase_name = $uri_parts[0];
+    $cbase_name = str_replace("%20", " ", $uri_parts[0]);
     
     $config = include(__DIR__ . "/../private/config.php");
     
@@ -39,7 +39,7 @@
             $cbase = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($cbase) {
                 header("HTTP/1.1 409 Conflict");
-                exit("<h1>409 Conflict</h1><p>Existing CBase name. Please choose another name.</p>");
+                exit("<h1>409 Conflict</h1><p>Existing CBase name. Please choose another name. Click <a href='/'>here</a> to go back.</p>");
             } else {
                 $admin_email = $_POST["admin_email"];
                 $token = "";
@@ -55,13 +55,23 @@
                     "token_encrypted" => $token_encrypted
                 ]);
                 
+                $permalink =  str_replace(" ", "%20", "http://www.cbase.eu/{$cbase_name}?token={$token}");
+                
+                $headers  = "MIME-Version: 1.0\r\n";
+                $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+                $headers .= "From: no-reply@cbase.eu\r\n" .
+                            "X-Mailer: PHP/" . phpversion();
                 $email_title = "{$cbase_name} cbase admin permalink";
                 $email_body = "
-                    Hi, your cbase \"{$cbase_name}\" has been created. Click on the link to add projects to your cbase:
-                    
-                    http://www.cbase.eu/{$cbase_name}?token={$token}
+                    <html><body>
+                    <h1>CBase \"{$cbase_name}\" created</h1>
+                    <p>Hi, your cbase \"{$cbase_name}\" has been created. Click on the link to add projects to your cbase:</p>
+                    <p><a href=\"{$permalink}\">{$permalink}</a></p>
+                    </body></html>
                 ";
-                mail($_POST["admin_email"], $email_title, $email_body);
+                mail($_POST["admin_email"], $email_title, $email_body, $headers);
+                header("HTTP/1.1 201 Created");
+                exit("<h1>201 Created</h1><p>Please check your e-mail. Click <a href='/'>here</a> to go back.</p>");
             }
         }
     }
@@ -75,7 +85,7 @@
     <body>
         <header>
                 <h1><?= $cbase["name"] ?> CBase</h1>
-                <h2>Search Engine for Curated Collections of Projects</h2>
+                <h2>search engine for curated collections of projects</h2>
         </header>
         <main>
         <?php if ($cbase) { ?>
