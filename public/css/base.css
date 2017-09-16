@@ -23,6 +23,10 @@ main, footer {
     text-align: center;
     padding-top: 2em;
 }
+main {
+    max-width: 800px;
+    margin: auto;
+}
 .searchbar {
     text-align: center;
 }
@@ -32,6 +36,7 @@ main, footer {
     width: 20em;
     margin: 0.4em;
     border: 1px solid gray;
+    max-width: 90%;
 }
 .searchbar button {
     font-size: 1.4em;
@@ -39,4 +44,16 @@ main, footer {
     padding: 0.4em;
     border: 0;
     color: #333;
+}
+nav {
+    line-height: 2em;
+    background: gray;
+    text-align: right;
+}
+nav li {
+    display: inline-block;
+}
+nav a {
+    color: white;
+    margin: 0.4em;
 }

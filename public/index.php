@@ -1,31 +1,50 @@
 <?php
     //ini_set("error_reporting", E_ALL);
     //ini_set("display_errors", 1);
-
-    $uri = $_SERVER["REQUEST_URI"];
-    $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
     
-    $cbase_name = str_replace("%20", " ", $uri_parts[0]);
+    define("MODE_USER", 1);
+    define("MODE_ADMIN", 2);
     
     $config = include(__DIR__ . "/../private/config.php");
-    
     $pdo = new PDO(
         "mysql:host={$config["db"]["hostname"]};dbname={$config["db"]["dbname"]};charset=utf8mb4",
         $config["db"]["username"],
         $config["db"]["password"]
     );
     
-    define("MODE_USER", 1);
-    define("MODE_ADMIN", 2);
-    
+    $uri = $_SERVER["REQUEST_URI"];
+    $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
+    $cbase_name = str_replace("%20", " ", $uri_parts[0]);
     if ($cbase_name) { // cbase search page
-        $stmt = $pdo->prepare("SELECT * FROM cbases WHERE name = :name LIMIT 1");
-        $stmt->execute(["name" => $cbase_name]);
+        $sql = "SELECT * FROM cbases WHERE name = :name LIMIT 1";
+        $params = ["name" => $cbase_name];
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         $cbase = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($cbase) {
             $mode = MODE_USER;
             if (!empty($_GET["token"]) && password_verify($_GET["token"], $cbase["token_encrypted"])) {
                 $mode = MODE_ADMIN;
+            }
+            $sql = "SELECT * FROM projects WHERE cbase_id = {$cbase["id"]} ";
+            $params = [];
+            if ($_GET["q"]) {
+                $sql .= " AND description LIKE :q ";
+                $sql .= " OR country LIKE :q ";
+                $sql .= " OR name LIKE :q ";
+                $sql .= " OR type LIKE :q ";
+                $sql .= " OR category LIKE :q ";
+                $params["q"] = "%" . $_GET["q"] . "%";//var_dump($sql);
+            }
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
+                header("Content-type: application/json");
+                exit(json_encode($rs));
+            } else {
+                include(__DIR__ . "/../private/templates/results.template.php");
+                exit();
             }
         } else {
             header("HTTP/1.1 404 File Not Found");
@@ -75,35 +94,4 @@
             }
         }
     }
-?>
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="/css/reset.css">
-        <link rel="stylesheet" href="/css/base.css">
-    </head>
-    <body>
-        <header>
-                <h1><?= $cbase["name"] ?> CBase</h1>
-                <h2>search engine for curated collections of projects</h2>
-        </header>
-        <main>
-        <?php if ($cbase) { ?>
-            <form class="searchbar">
-                <input type="text" name="q"><br>
-                <button>Search CBase <?= $cbase["name"] ?></button>
-            </form>
-        <?php } else { ?>
-            <form method="post">
-                <h1>Create a new CBase</h1>
-                CBase name: <input name="cbase_name" type="text"><br>
-                Admin e-mail: <input name="admin_email" type="email"><br>
-                <button>Create CBase</button>
-            </form>
-        <?php } ?>
-        </main>
-        <footer>
-            <a href="https://github.com/codefornl/cbase">CBase on Github</a>
-        </footer>
-    </body>
-</html>
+    include(__DIR__ . "/../private/templates/results.template.php");
