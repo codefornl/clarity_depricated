@@ -1,0 +1,49 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "CBase is a service that lets you create search engines for curated collections of projects.",
+    "version": "1.0.0",
+    "title": "CBase",
+    "termsOfService": "",
+    "contact": {
+      "email": "johan@codefor.nl"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://mit-license.org/"
+    }
+  },
+  "host": "www.cbase.eu",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/{cbase_name}": {
+      "get": {
+        "summary": "Get projects for CBase with name {cbase_name}.",
+        "operationId": "getProjects",
+        "produces": [
+          "application/json",
+          "text/html"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cbase_name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CBase found, matching projects listed"
+          },
+          "404": {
+            "description": "CBase not found"
+          }
+        }
+      }
+    }
+  }
+}
