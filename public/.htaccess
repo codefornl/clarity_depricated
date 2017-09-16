@@ -1,5 +1,7 @@
 RewriteEngine on
 
+Header set Access-Control-Allow-Origin "*"
+
 #RewriteRule ^test(/(.*))?$ /test.php?path=$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f

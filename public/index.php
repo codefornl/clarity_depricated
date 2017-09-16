@@ -29,11 +29,14 @@
             $sql = "SELECT * FROM projects WHERE cbase_id = {$cbase["id"]} ";
             $params = [];
             if ($_GET["q"]) {
-                $sql .= " AND description LIKE :q ";
-                $sql .= " OR country LIKE :q ";
-                $sql .= " OR name LIKE :q ";
-                $sql .= " OR type LIKE :q ";
-                $sql .= " OR category LIKE :q ";
+                $sql .= "
+                    AND (
+                        description LIKE :q
+                        OR country LIKE :q
+                        OR name LIKE :q
+                        OR type LIKE :q
+                        OR category LIKE :q
+                    ) ";
                 $params["q"] = "%" . $_GET["q"] . "%";//var_dump($sql);
             }
             $stmt = $pdo->prepare($sql);
