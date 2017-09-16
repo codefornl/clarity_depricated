@@ -37,7 +37,7 @@
                         OR type LIKE :q
                         OR category LIKE :q
                     ) ";
-                $params["q"] = "%" . $_GET["q"] . "%";//var_dump($sql);
+                $params["q"] = "%" . $_GET["q"] . "%";
             }
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
