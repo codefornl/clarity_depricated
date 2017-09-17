@@ -10,17 +10,17 @@
         <nav>
             <ul>
 <?php if ($mode === MODE_ADMIN) { ?>
-                <li><a href="">+add project</a></li>
+                <li><a href="/<?=$cbase["name"]?>/add?token=<?=$_GET["token"]?>">+add project</a></li>
 <?php } ?>
                 <li><a href="">more info</a></li>
             </ul>
         </nav>
         <header>
             <?php if (!empty($cbase["image"])) { ?>
-            <img src="<?=$cbase["image"]?>" style="height: 4em">
+                <img src="<?=$cbase["image"]?>" style="height: 4em">
             <?php } else { ?>
-            <h1><?= $cbase["name"] ?> CBase</h1>
-            <h2>search engine for curated collections of projects</h2>
+                <h1><?= $cbase["name"] ?> CBase</h1>
+                <h2>search engine for curated collections of projects</h2>
             <?php } ?>
         </header>
         <main>

@@ -26,28 +26,65 @@
             if (!empty($_GET["token"]) && password_verify($_GET["token"], $cbase["token_encrypted"])) {
                 $mode = MODE_ADMIN;
             }
-            $sql = "SELECT * FROM projects WHERE cbase_id = {$cbase["id"]} ";
-            $params = [];
-            if ($_GET["q"]) {
-                $sql .= "
-                    AND (
-                        description LIKE :q
-                        OR country LIKE :q
-                        OR name LIKE :q
-                        OR type LIKE :q
-                        OR category LIKE :q
-                    ) ";
-                $params["q"] = "%" . $_GET["q"] . "%";
-            }
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-            $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
-                header("Content-type: application/json");
-                exit(json_encode($rs));
+            if ($mode === MODE_ADMIN && $uri_parts[1] === "add") {
+                if (!empty($_POST) && !empty($_POST["name"])) {
+                    $sql = "
+                        INSERT INTO projects
+                        SET
+                            cbase_id = {$cbase["id"]},
+                            name = :name,
+                            description = :description,
+                            image = :image,
+                            type = :type,
+                            country = :country,
+                            category = :category,
+                            organisation = :organisation,
+                            website = :website,
+                            download = :download,
+                            license = :license
+                    ";
+                    $stmt = $pdo->prepare($sql);
+                    $rs = $stmt->execute([
+                        "name" => $_POST["name"],
+                        "description" => $_POST["description"],
+                        "image" => $_POST["image"],
+                        "type" => $_POST["type"],
+                        "country" => $_POST["country"],
+                        "category" => $_POST["category"],
+                        "organisation" => $_POST["organisation"],
+                        "website" => $_POST["website"],
+                        "download" => $_POST["download"],
+                        "license" => $_POST["license"]
+                    ]);
+                    exit("<h1>201 Created</h1><p>Klik <a href='/{$cbase["name"]}?token={$_GET["token"]}'>hier</a> om verder te gaan</p>");
+                } else {
+                    include(__DIR__ . "/../private/templates/add.template.php");
+                    exit();
+                }
             } else {
-                include(__DIR__ . "/../private/templates/results.template.php");
-                exit();
+                $sql = "SELECT * FROM projects WHERE cbase_id = {$cbase["id"]} ";
+                $params = [];
+                if ($_GET["q"]) {
+                    $sql .= "
+                        AND (
+                            description LIKE :q
+                            OR country LIKE :q
+                            OR name LIKE :q
+                            OR type LIKE :q
+                            OR category LIKE :q
+                        ) ";
+                    $params["q"] = "%" . $_GET["q"] . "%";
+                }
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
+                    header("Content-type: application/json");
+                    exit(json_encode($rs));
+                } else {
+                    include(__DIR__ . "/../private/templates/results.template.php");
+                    exit();
+                }
             }
         } else {
             header("HTTP/1.1 404 File Not Found");
