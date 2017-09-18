@@ -75,7 +75,7 @@
                 </div>
                 <div class="info">
                     <a class="name" href="<?=$r["website"]?>"><?=$r["name"]?></a><br>
-                    <p><?=$r["description"]?></p>
+                    <p><?=str_replace("\n", "<br>", $r["description"])?></p>
                     <a href="?q=<?=strtolower($r["type"])?>"><span class="type"><?=$r["type"]?></span></a>
                     <a href="?q=<?=strtolower($r["country"])?>"><span class="country"><?=$r["country"]?></span></a>
                     <a href="?q=<?=strtolower($r["category"])?>"><span class="category"><?=$r["category"]?></span></a>
