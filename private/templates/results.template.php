@@ -29,7 +29,7 @@
         <?php if ($cbase) { ?>
             <form class="searchbar" style="margin-bottom: 4em">
                 <input type="text" name="q" value="<?=$_GET["q"]?>"><br>
-                <button>Search <?= $cbase["name"] ?></button>
+                <button>Search</button>
             </form>
         <?php } else { ?>
             <form method="post">
