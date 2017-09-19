@@ -14,7 +14,7 @@
     
     $uri = $_SERVER["REQUEST_URI"];
     $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
-    $cbase_name = str_replace("%20", " ", $uri_parts[0]);
+    $cbase_name = str_replace(["%20", "_"], " ", $uri_parts[0]);
     if ($cbase_name) { // cbase search page
         $sql = "SELECT * FROM cbases WHERE name = :name LIMIT 1";
         $params = ["name" => $cbase_name];

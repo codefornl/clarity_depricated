@@ -16,12 +16,14 @@
             </ul>
         </nav>
         <header>
-            <?php if (!empty($cbase["image"])) { ?>
-                <img src="<?=$cbase["image"]?>" style="height: 4em">
-            <?php } else { ?>
-                <h1><?= $cbase["name"] ?> CBase</h1>
-                <h2>search engine for curated collections of projects</h2>
-            <?php } ?>
+            <a href="/<?=$cbase["name"]?>">
+                <?php if (!empty($cbase["image"])) { ?>
+                    <img src="<?=$cbase["image"]?>" style="height: 4em">
+                <?php } else { ?>
+                    <h1><?= $cbase["name"] ?> CBase</h1>
+                    <h2>search engine for curated collections of projects</h2>
+                <?php } ?>
+            </a>
         </header>
         <main>
         <?php if ($cbase) { ?>
