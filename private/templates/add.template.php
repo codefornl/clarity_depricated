@@ -28,9 +28,9 @@
                 Name: <input name="name" type="text" value="<?=$_POST["name"]?>"><br>
                 Description: <textarea name="description" value="<?=$_POST["description"]?>"></textarea><br>
                 Image URI: <input name="image" type="text" value="<?=$_POST["image"]?>"><br>
+                Category: <input name="category" type="text" value="<?=$_POST["category"]?>"><br>
                 Type: <input name="type" type="text" value="<?=$_POST["type"]?>"><br>
                 Country: <input name="country" type="text" value="<?=$_POST["country"]?>"><br>
-                Category: <input name="category" type="text" value="<?=$_POST["category"]?>"><br>
                 Organisation: <input name="organisation" type="text" value="<?=$_POST["organisation"]?>"><br>
                 Website URL: <input name="website" type="text" value="<?=$_POST["website"]?>"><br>
                 Download URI: <input name="download" type="text" value="<?=$_POST["download"]?>"><br>
