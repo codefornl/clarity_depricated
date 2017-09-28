@@ -15,6 +15,9 @@
                 <li><a href="">more info</a></li>
             </ul>
         </nav>
+        <?php if (!$cbase) { ?>
+            <div style="height: 400px; background: url(https://pbs.twimg.com/profile_banners/753880345683034112/1468589964/1500x500) center right no-repeat; background-size: cover"></div>
+        <?php } ?>
         <header>
             <a href="/<?=$cbase["name"]?>">
                 <?php if (!empty($cbase["image"])) { ?>
@@ -32,6 +35,13 @@
                 <button>Search</button>
             </form>
         <?php } else { ?>
+            <style>
+                form {
+                    background: #ccc;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                }
+            </style>
             <form method="post">
                 <h1>Create a new CBase</h1>
                 CBase name: <input name="cbase_name" type="text"><br>
@@ -81,6 +91,17 @@
                     <a href="?q=<?=strtolower($r["category"])?>"><span class="category"><?=$r["category"]?></span></a>
                     <a href="?q=<?=strtolower($r["type"])?>"><span class="type"><?=$r["type"]?></span></a>
                     <a href="?q=<?=strtolower($r["country"])?>"><span class="country"><?=$r["country"]?></span></a>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+        <?php } ?>
+        <?php foreach ($cbases as $cbase) { ?>
+            <div style="display: inline-block; width: 240px; margin: 20px; padding: 10px; border: 1px solid gray">
+                <div style="padding: 10px; height: 120px">
+                    <img src="<?=$cbase["image"]?>" style="max-height: 120px; max-width: 100%">
+                </div>
+                <div style="background: #ccc; font-size: 1.4em; line-height: 2em; overflow: hidden">
+                    <a class="name" href="/<?=$cbase["name"]?>"><?=$cbase["name"]?></a><br>
                 </div>
                 <div style="clear: both"></div>
             </div>

@@ -132,6 +132,10 @@
                 header("HTTP/1.1 201 Created");
                 exit("<h1>201 Created</h1><p>Please check your e-mail. Click <a href='/'>here</a> to go back.</p>");
             }
+        } else {
+            $stmt = $pdo->prepare("SELECT id, name, image FROM cbases");
+            $stmt->execute();
+            $cbases = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
     include(__DIR__ . "/../private/templates/results.template.php");
