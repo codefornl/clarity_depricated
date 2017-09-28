@@ -23,8 +23,8 @@
                 <?php if (!empty($cbase["image"])) { ?>
                     <img src="<?=$cbase["image"]?>" style="height: 4em">
                 <?php } else { ?>
-                    <h1><?= $cbase["name"] ?> CBase</h1>
-                    <h2>search engine for curated collections of projects</h2>
+                    <h1><?= $cbase["name"] ?></h1>
+                    <h2>CBase, search engine for curated collections</h2>
                 <?php } ?>
             </a>
         </header>
@@ -100,7 +100,7 @@
                 <div style="padding: 10px; height: 120px">
                     <img src="<?=$cbase["image"]?>" style="max-height: 120px; max-width: 100%">
                 </div>
-                <div style="background: #ccc; font-size: 1.4em; line-height: 2em; overflow: hidden">
+                <div style="background: #ccc; font-size: 1.4em; line-height: 2em; height: 2em; overflow: hidden">
                     <a class="name" href="/<?=$cbase["name"]?>"><?=$cbase["name"]?></a><br>
                 </div>
                 <div style="clear: both"></div>
