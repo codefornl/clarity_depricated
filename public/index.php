@@ -75,12 +75,22 @@
                         ) ";
                     $params["q"] = "%" . $_GET["q"] . "%";
                 }
+                $sql .= " ORDER BY name ASC";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($params);
                 $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
                     header("Content-type: application/json");
-                    exit(json_encode($rs));
+                    exit(json_encode([
+                        "links" => [
+                            "first" => null,
+                            "previous" => null,
+                            "self" => "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]",
+                            "next" => null,
+                            "last" => null,
+                        ],
+                        "results" => $rs
+                    ]));
                 } else {
                     include(__DIR__ . "/../private/templates/results.template.php");
                     exit();

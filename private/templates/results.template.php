@@ -27,6 +27,9 @@
                     <h2>CBase, search engine for curated collections</h2>
                 <?php } ?>
             </a>
+            <div class="description">
+                <?=$cbase["description"]?>
+            </div>
         </header>
         <main>
         <?php if ($cbase) { ?>
@@ -81,7 +84,7 @@
             }
         </style>
         <?php foreach ($rs as $r) { ?>
-            <div class="result">
+            <div class="result" data-id="<?=$r["id"]?>">
                 <div style="height: 200px; width: 100px; float: right; margin: 1em">
                     <img src="<?=$r["image"]?>">
                 </div>

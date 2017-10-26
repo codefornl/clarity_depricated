@@ -17,7 +17,14 @@ input, button {
 }
 header {
     text-align: center;
-    padding: 8em 0 4em;
+    padding: 8em 0 0;
+}
+header .description {
+    max-width: 800px;
+    line-height: 1.4em;
+    background: #eee;
+    padding: 2em;
+    margin: 2em auto;
 }
 main, footer {
     text-align: center;
