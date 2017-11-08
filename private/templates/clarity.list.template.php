@@ -7,6 +7,7 @@
     <link href="css/foundation.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/additions.css" rel="stylesheet" type="text/css">
 </head>
 <body class="layout">
 
@@ -18,10 +19,12 @@
 
     <main class="main-content layout__main-content">
 
+        <!--
         <form class="searchbar layout__searchbar">
             <input type="text" class="searchbar__input" placeholder="Search eGovernment applications">
             <button class="searchbar__button"><img src="svg/searchbar-icon.svg"></button>
         </form>
+        -->
 
 <?php foreach ($cbases as $cbase) { ?>
 
@@ -49,8 +52,12 @@
 
             <div class="layout__project-list">
                 
-<?php foreach ($projects as $project) {
-          if ($project["cbase_id"] === $cbase["id"]) { ?>
+<?php
+    $count = 0;
+    foreach ($projects as $project) {
+        if ($project["cbase_id"] === $cbase["id"] && $count < 5) {
+            $count++;
+?>
 
                 <a href="detail.html">
                     <div class="project layout__project-list-item">
@@ -68,7 +75,26 @@
                     </div>
                 </a>
                 
-<?php } } ?>
+<?php
+        } // if
+    } // foreach
+?>
+
+                <a href="detail.html">
+                    <div class="project layout__project-list-item">
+                        <img src="" class="project__image">
+                        <div class="project__meta">
+                            <div class="project__summary">
+                                <h3 class="project__title">MORE INFO &gt;</h3>
+                                <h4 class="project__location"></h4>
+                            </div>
+                            <div class="project__tools">
+                                <img src="svg/tools-icon.svg" class="project__tools-icon">
+                                <span class="project__tools-count">16 total</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
 
             </div>
         </div>
