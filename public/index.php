@@ -1,6 +1,6 @@
 <?php
-    //ini_set("error_reporting", E_ALL);
-    //ini_set("display_errors", 1);
+    ini_set("error_reporting", E_PARSE);
+    ini_set("display_errors", 1);
     
     define("MODE_USER", 1);
     define("MODE_ADMIN", 2);
@@ -15,6 +15,7 @@
     $uri = $_SERVER["REQUEST_URI"];
     $uri_parts = array_values(array_filter(explode("/", explode("?", $uri)[0])));
     $cbase_name = str_replace(["%20", "_"], " ", $uri_parts[0]);
+    $project_id = (int) $uri_parts[1];
     if ($cbase_name) { // cbase search page
         $sql = "SELECT * FROM cbases WHERE name = :name LIMIT 1";
         $params = ["name" => $cbase_name];
@@ -62,38 +63,61 @@
                     exit();
                 }
             } else {
-                $sql = "SELECT * FROM projects WHERE cbase_id = {$cbase["id"]} ";
-                $params = [];
-                if ($_GET["q"]) {
-                    $sql .= "
-                        AND (
-                            description LIKE :q
-                            OR country LIKE :q
-                            OR name LIKE :q
-                            OR type LIKE :q
-                            OR category LIKE :q
-                        ) ";
-                    $params["q"] = "%" . $_GET["q"] . "%";
-                }
-                $sql .= " ORDER BY name ASC";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute($params);
-                $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
-                    header("Content-type: application/json");
-                    exit(json_encode([
-                        "links" => [
-                            "first" => null,
-                            "previous" => null,
-                            "self" => "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]",
-                            "next" => null,
-                            "last" => null,
-                        ],
-                        "results" => $rs
-                    ]));
+                if ($project_id) {
+                    $sql = "SELECT * FROM projects WHERE id = {$project_id} LIMIT 1";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $project = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
+                        header("Content-type: application/json");
+                        exit(json_encode([
+                            "links" => [
+                                "first" => null,
+                                "previous" => null,
+                                "self" => "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]",
+                                "next" => null,
+                                "last" => null,
+                            ],
+                            "project" => $rs
+                        ]));
+                    } else {
+                        include(__DIR__ . "/../private/templates/clarity.details.template.php");
+                        exit();
+                    }
                 } else {
-                    include(__DIR__ . "/../private/templates/results.template.php");
-                    exit();
+                    $sql = "SELECT * FROM projects WHERE cbase_id = {$cbase["id"]} ";
+                    $params = [];
+                    if ($_GET["q"]) {
+                        $sql .= "
+                            AND (
+                                description LIKE :q
+                                OR country LIKE :q
+                                OR name LIKE :q
+                                OR type LIKE :q
+                                OR category LIKE :q
+                            ) ";
+                        $params["q"] = "%" . $_GET["q"] . "%";
+                    }
+                    $sql .= " ORDER BY name ASC";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($params);
+                    $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    if (strpos($_SERVER["HTTP_ACCEPT"], "application/json") !== false || $_GET["type"] === "json") {
+                        header("Content-type: application/json");
+                        exit(json_encode([
+                            "links" => [
+                                "first" => null,
+                                "previous" => null,
+                                "self" => "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]",
+                                "next" => null,
+                                "last" => null,
+                            ],
+                            "results" => $rs
+                        ]));
+                    } else {
+                        include(__DIR__ . "/../private/templates/clarity.results.template.php");
+                        exit();
+                    }
                 }
             }
         } else {
@@ -143,7 +167,7 @@
                 exit("<h1>201 Created</h1><p>Please check your e-mail. Click <a href='/'>here</a> to go back.</p>");
             }
         } else {
-            $stmt = $pdo->prepare("SELECT id, name, image, description FROM cbases");
+            $stmt = $pdo->prepare("SELECT id, name, admin_name, admin_email, image, description FROM cbases");
             $stmt->execute();
             $cbases = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $stmt = $pdo->prepare("SELECT * FROM projects");

@@ -19,12 +19,10 @@
 
     <main class="main-content layout__main-content">
 
-        <form class="searchbar layout__searchbar" style="visibility: hidden">
+        <form class="searchbar layout__searchbar">
             <input type="text" class="searchbar__input" placeholder="Search eGovernment applications" name="q" value="<?=$_GET["q"]?>">
             <button class="searchbar__button"><img src="/svg/searchbar-icon.svg"></button>
         </form>
-
-<?php foreach ($cbases as $cbase) : ?>
 
         <div class="layout__row">
 
@@ -34,8 +32,11 @@
                     <a href="/<?=$cbase["name"]?>">
                         <h2 class="list-summary__title"><?=$cbase["name"]?></h2>
                     </a>
-                    <div class="list-summary__count">... projects</div>
+                    <div class="list-summary__count"><?=count($rs)?> projects</div>
                     <p class="list-summary__description"><?=$cbase["description"]?></p>
+
+                    <a href="/" class="back-link layout__back" style="text-align: left; display: block; margin-top: 20px">&larr; Back to homepage</a>
+                    
                     <div class="list-summary__curator">
                         <div class="curator">
                             <img src="<?=$cbase["image"]?>" class="curator__avatar">
@@ -52,9 +53,7 @@
 
             <div class="layout__project-list">
                 
-    <?php $count = 0; foreach ($projects as $project) : ?>
-
-        <?php if ($project["cbase_id"] === $cbase["id"] && $count < 2) : $count++; ?>
+<?php foreach ($rs as $project) : ?>
 
                 <a href="/<?=$cbase["name"]?>/<?=$project["id"]?>/<?=$project["name"]?>">
                     <div class="project layout__project-list-item">
@@ -72,28 +71,10 @@
                     </div>
                 </a>
                 
-        <?php endif; ?>
-
-    <?php endforeach; ?>
-
-                    <a href="/<?=$cbase["name"]?>">
-                    <div class="project layout__project-list-item">
-                        <img src="http://img.codefor.nl/?url=http://www.cbase.eu/img/cbase_screen.png&height=426&width=640" class="project__image">
-                        <div class="project__meta">
-                            <div class="project__summary">
-                                <h3 class="project__title">MORE »</h3>
-                                <h4 class="project__location"></h4>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+<?php endforeach; ?>
 
             </div>
         </div>
-        
-        <hr>
-        
-<?php endforeach; ?>
 
     </main>
 </body>
